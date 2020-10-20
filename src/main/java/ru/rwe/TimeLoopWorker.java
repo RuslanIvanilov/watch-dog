@@ -1,6 +1,7 @@
 package ru.rwe;
 
 import org.apache.log4j.Logger;
+import ru.rwe.util.TimeMeasure;
 
 public class TimeLoopWorker implements Runnable {
     volatile boolean cancelSignal = false;
@@ -16,7 +17,7 @@ public class TimeLoopWorker implements Runnable {
             while (!cancelSignal){
                 String alertMessage = checker.getCheckResultMessage();
                 if (checker.hasTroubles())
-                    emailSender.sendEmail(WatchDogProperty.EMAIL_DEFAULT_SUBJECT, alertMessage);
+                    TimeMeasure.check(() -> emailSender.sendEmail(WatchDogProperty.EMAIL_DEFAULT_SUBJECT, alertMessage) );
                 Thread.sleep(WatchDogProperty.CHECK_INTERVAL);
             }
         }catch(Exception e){
